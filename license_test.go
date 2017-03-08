@@ -158,7 +158,7 @@ func TestLicenseTypes(t *testing.T) {
 
 		l := New("", ltext)
 		if err := l.GuessType(); err != nil {
-			t.Fatalf("err: %s", err)
+			t.Fatalf("err (%s): %s", ltype, err)
 		}
 		if l.Type != ltype {
 			t.Fatalf("\nexpected: %s\ngot: %s", ltype, l.Type)
@@ -181,7 +181,7 @@ func TestMatchLicenseFile(t *testing.T) {
 	// should always return the original test file (mixed case), and
 	//  not the license file version (typically upper case)
 
-	licenses := []string{"copying.txt", "COPYING", "License"}
+	licenses := []string{"copying.txt$", "COPYING$", "License$"}
 	tests := []struct {
 		files []string
 		want  []string

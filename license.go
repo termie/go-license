@@ -2,6 +2,7 @@ package license
 
 import (
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"path/filepath"
 	"regexp"
@@ -36,9 +37,9 @@ var (
 // A set of reasonable license file names to use when guessing where the
 // license may be. Case does not matter.
 var DefaultLicenseFiles = []string{
-	"license", "license.txt", "license.md",
-	"copying", "copying.txt", "copying.md",
-	"unlicense",
+	"licen[cs]e$", "licen[cs]e.txt$", "licen[cs]e.md$",
+	"copying$", "copying.txt$", "copying.md$",
+	"unlicense$",
 }
 
 // A slice of standardized license abbreviations
@@ -163,7 +164,7 @@ func (l *License) GuessType() error {
 		"person obtaining a copy of this software"):
 		l.Type = LicenseMIT
 
-	case scan(comp, "permission to use, copy, modify, and/or distribute this "+
+	case scan(comp, "permission to use, copy, modify, and(/or)? distribute this "+
 		"software for any"):
 		l.Type = LicenseISC
 
@@ -200,7 +201,7 @@ func (l *License) GuessType() error {
 			l.Type = LicenseFreeBSD
 		}
 
-	case scan(comp, "common development and distribution license (cddl) "+
+	case scan(comp, `common development and distribution license \(cddl\) `+
 		"version 1.0"):
 		l.Type = LicenseCDDL10
 
@@ -222,7 +223,8 @@ func (l *License) GuessType() error {
 // of text. Any text transformation should be done prior to calling this
 // function so that it need not be repeated for every check.
 func scan(text, match string) bool {
-	return strings.Contains(text, match)
+	re := regexp.MustCompile(fmt.Sprintf("(?m)%s", match))
+	return re.MatchString(text)
 }
 
 // returns a []string of files in a directory, or error
@@ -245,7 +247,8 @@ func matchLicenseFile(licenses []string, files []string) []string {
 	out := make([]string, 0, 1)
 	for _, file := range files {
 		for _, license := range licenses {
-			if strings.EqualFold(license, file) {
+			re := regexp.MustCompile(fmt.Sprintf("(?i)%s", license))
+			if re.MatchString(file) {
 				out = append(out, file)
 			}
 		}
