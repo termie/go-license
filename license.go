@@ -37,9 +37,9 @@ var (
 // A set of reasonable license file names to use when guessing where the
 // license may be. Case does not matter.
 var DefaultLicenseFiles = []string{
-	"licen[cs]e$", "licen[cs]e.txt$", "licen[cs]e.md$",
-	"copying$", "copying.txt$", "copying.md$",
-	"unlicense$",
+	"licen[cs]e", "licen[cs]e.txt", "licen[cs]e.md",
+	"copying", "copying.txt", "copying.md",
+	"unlicense",
 }
 
 // A slice of standardized license abbreviations
@@ -247,7 +247,7 @@ func matchLicenseFile(licenses []string, files []string) []string {
 	out := make([]string, 0, 1)
 	for _, file := range files {
 		for _, license := range licenses {
-			re := regexp.MustCompile(fmt.Sprintf("(?i)%s", license))
+			re := regexp.MustCompile(fmt.Sprintf("(?i)^%s$", license))
 			if re.MatchString(file) {
 				out = append(out, file)
 			}
