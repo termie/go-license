@@ -250,6 +250,7 @@ func matchLicenseFile(licenses []string, files []string) []string {
 			re := regexp.MustCompile(fmt.Sprintf("(?i)^%s$", license))
 			if re.MatchString(file) {
 				out = append(out, file)
+				break
 			}
 		}
 	}
